@@ -6,6 +6,10 @@ from vnquant import plot as pl
 from vnquant import utils
 
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+from statsmodels.tsa.stattools import adfuller
+
 class SelectedStock:
     """SelectedStock
     
@@ -37,56 +41,107 @@ class SelectedStock:
         is_ohlcv = utils._isOHLCV(self.data)
         print(f"stock {self.stock} is OHLC: '{is_ohlc}' and OHLCV: '{is_ohlcv}'")
         
+
+class stockchart:
+    @staticmethod
+    def plot(column, stock_data,stock_name):
+        fig, ax = plt.subplots(figsize=(15, 10))
+        try:
+            mean = stock_data[column].mean()
+            ax.plot(stock_data[column])
+            ax.axhline(y=mean, color='red', label='Mean Line')
+            
+        except AttributeError:
+            mean = stock_data.data[column].mean()
+            ax.plot(stock_data.data[column])
+            ax.axhline(y=mean, color='red', label='Mean Line')
+        except Exception as e:
+            print(f"Lỗi không xác định: {e}")
         
-class MultiStockChart:
-    def __init__(self, stocks):
-        self.stocks = stocks
-    def plot_prices(self, column):
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Value')
+        ax.set_title(f'Plot for {stock_name}({column.capitalize()})')
+        plt.legend()
+
+    @staticmethod
+    def plot_prices(column, stocks):
         fig, ax = plt.subplots(figsize=(15, 10))
 
-        for stock_name, stock in self.stocks.items():
+        for stock_name, stock in stocks.items():
             try:
-                ax.plot(stock.data[column], label= stock_name)
+                ax.plot(stock.data[column], label=stock_name)
             except AttributeError:
-                ax.plot(stock[column], label= stock )
+                ax.plot(stock[column], label=stock)
             except Exception as e:
                 print(f"Lỗi không xác định: {e}")
         ax.set_xlabel('Date')
         ax.set_ylabel('Price')
-        ax.set_title(f'Stock {column.capitalize()} Price')
+        ax.set_title(f'Plot for Stock {column} Price')
         plt.legend()
-    def plot_KDE(self,column):
-        fig, ax = plt.subplots(figsize=(15, 10))
-        for stock_name, stock in self.stocks.items():
-            try:
-                stock.data[column].plot(kind='kde', label=stock_name, ax=ax)
-                plt.title('KDE Plot')
-                plt.xlabel('Probability Distribution')
-                plt.ylabel('Density')
-                plt.show()
-            except AttributeError:
-                stock[column].plot(kind='kde', label=stock_name, ax=ax)
-                plt.title('KDE Plot')
-                plt.xlabel('Probability Distribution')
-                plt.ylabel('Density')
-                plt.show()
-            except Exception as e:
-                print(f"Lỗi không xác định: {e}")
-        fig, ax = plt.subplots(figsize=(15, 10))
-        for stock_name, stock in self.stocks.items():
-            try:
-                stock.data[column].plot(kind='kde', label=stock_name, ax=ax)
-            except AttributeError:
-                stock[column].plot(kind='kde', label=stock_name, ax=ax)
-            except Exception as e:
-                print(f"Lỗi không xác định: {e}")
-        plt.title('KDE Plot')
-        plt.xlabel('Probability Distribution')
-        plt.ylabel('Density')
-        plt.legend()
-        plt.show()
-        
 
+    @staticmethod
+    def plot_histplot(column, stock_data,stock_name):
+        fig, ax = plt.subplots(figsize=(8, 6))
+        
+        try:
+            mean = stock_data.data[column].mean()
+            sns.histplot(stock_data.data[column].values, kde=True, color="skyblue", ax=ax,alpha=0.8)
+            ax.axvline(x=mean, c='red')
+            
+        except AttributeError:
+            mean = stock_data[column].mean()
+            sns.histplot(stock_data[column].values, kde=True, color="skyblue", ax=ax,alpha=0.8)
+            ax.axvline(x=mean, c='red')
+        except Exception as e:
+            print(f"Lỗi không xác định: {e}")
+        
+        ax.set_title(f'Histplot for {stock_name}({column.capitalize()})')
+        ax.set_xlabel('Distribution return')
+        ax.set_ylabel('frequency')
+        plt.show()
+
+    @staticmethod
+    def plot_scatter(column, stock_data,stock_name):
+        fig_scatter, ax_scatter = plt.subplots(figsize=(8, 6))
+        try:
+            x = stock_data[column][1:]
+            y = stock_data[column][:-1]
+            plt.scatter(x=x,y=y,alpha=0.5)
+        except AttributeError:
+            x = stock_data.data[column][1:]
+            y = stock_data.data[column][:-1]
+            plt.scatter(x=x,y=y,alpha=0.5)
+        except Exception as e:
+            print(f"Lỗi không xác định: {e}")
+
+        ax_scatter.set_title(f'Scatter Plot for {stock_name}({column.capitalize()})')
+        ax_scatter.set_xlabel('value(t-1)')
+        ax_scatter.set_ylabel('value(t)')
+        plt.show()
+
+
+    @staticmethod
+    def plot_ultimate(column, stocks):
+        for stock_name, stock_data in stocks.items():
+            stockchart.plot_histplot(column, stock_data,stock_name)
+            stockchart.plot_scatter(column, stock_data,stock_name)
+            stockchart.plot(column, stock_data,stock_name)
+        if len(stocks) > 1:
+            fig_all, ax_all = plt.subplots(figsize=(15, 10))
+            for stock_name, stock in stocks.items():
+                try:
+                    stock.data[column].plot(kind='kde', label=stock_name, ax=ax_all)
+                except AttributeError:
+                    stock[column].plot(kind='kde', label=stock_name, ax=ax_all)
+                except Exception as e:
+                    print(f"Lỗi không xác định: {e}")
+            ax_all.set_title('KDE Plot for All Stocks')
+            ax_all.set_xlabel('Distribution return')
+            ax_all.set_ylabel('frequency')
+            ax_all.legend()
+        plt.show()
+
+        
 class StockAnalysis:
     def __init__(self, data):
         self.data = data
@@ -129,13 +184,14 @@ class StockAnalysis:
     def calculate_cumulative_returns(self):
         self.data['Cumulative_Returns'] = (1 + self.data['Daily_Returns']).cumprod() - 1
     def calculate_percent_daily_returns(self):
-        self.data['Percent_Daily_Returns'] = self.data['close'].pct_change()
-        self.data['Percent_Daily_Returns'] = self.data['Daily_Returns'].fillna(self.data['Daily_Returns'].mean())
+        self.data['Percent_Daily_Returns'] = self.data['close'].pct_change(1)
+        self.data['Percent_Daily_Returns'].fillna(self.data['Daily_Returns'].mean())
 
     def calculate_daily_returns(self):
         self.data['Daily_Returns'] = np.log(self.data['close']/self.data['close'].shift(1))
-        mean = self.data['Daily_Returns'].mean()
-        self.data['Daily_Returns'].fillna(mean, inplace=True)
+        # mean  = self.data['Daily_Returns'].mean()
+        # self.data['Daily_Returns'] = self.data['Daily_Returns'].fillna(mean)
+
     def calculate_sharpe_ratio(self, risk_free_rate):
         excess_returns = self.data['Daily_Returns'] - risk_free_rate
         average_excess_return = excess_returns.mean()
@@ -149,3 +205,64 @@ class StockAnalysis:
         total_losses = self.data['Daily_Returns'][self.data['Daily_Returns'] < 0].sum()
 
         return total_gains, total_losses
+    
+
+
+
+
+def remove_outliers_IQR(data, column, threshold=1.5):
+    data_copy = data.copy()
+    Q1 = np.percentile(data_copy[column], 25)
+    Q3 = np.percentile(data_copy[column], 75)
+    IQR = Q3 - Q1
+    # Tìm giá trị ngoại lai
+    lower_bound = Q1 - threshold * IQR
+    upper_bound = Q3 + threshold * IQR
+    outliers = (data_copy[column] < lower_bound) | (data_copy[column] > upper_bound)
+    data_cleaned = data_copy.copy()
+
+    data_cleaned.loc[outliers, column] = np.nan  # Gán giá trị ngoại lai bằng NaN
+    print(f"Đã loại bỏ {outliers.sum()} phần tử")
+    return data_cleaned
+
+
+def test_stationarity(timeseries,name):
+
+    rolmean = timeseries.rolling(12).mean()
+    rolstd = timeseries.rolling(12).std()
+
+    plt.figure(figsize=(15, 10))
+    plt.plot(timeseries, color='blue',label='Original')
+    plt.plot(rolmean, color='red', label='Rolling Mean')
+    plt.plot(rolstd, color='black', label = 'Rolling Std')
+    plt.legend(loc='best')
+    plt.title(f'Rolling Mean and Standard Deviation Of {name}')
+    plt.show(block=False)
+    
+    print(f"Results of Argument dickey fuller test {name}:")
+    adft = adfuller(timeseries,autolag='AIC')
+    output = pd.Series(adft[0:4],index=['Test Statistics','p-value','No. of lags used','Number of observations used'])
+    for key,values in adft[4].items():
+        output['critical value (%s)'%key] =  values
+    print(output)
+    
+# import pandas as pd
+# from scipy import stats
+# z_scores = stats.zscore(r_t)
+
+# # Thiết lập ngưỡng Z-score
+# threshold = 4
+
+# # Tìm giá trị ngoại lai
+# outliers = r_t[abs(z_scores) > threshold]
+# print(f" Gía trị ngoại lai : {outliers}")
+
+# data_cleaned = r_t[abs(z_scores) <= threshold]
+# plt.figure(figsize=(8, 8))
+# x=data_cleaned[1:]
+# y=data_cleaned[:-1]
+# plt.scatter(x=x,y=y)
+# plt.title('Return rate')
+# plt.xlabel('r(t-1)')
+# plt.ylabel('r(t)')
+# plt.show()
