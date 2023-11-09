@@ -7,6 +7,7 @@ from vnquant import utils
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 from statsmodels.tsa.stattools import adfuller
 
@@ -27,6 +28,8 @@ class SelectedStock:
                                minimal=True, 
                                data_source="VND")
         self.data = loader.download()
+        full_date_rng =  pd.date_range(start=self.data.index[0], end= self.data.index[-1], freq='D')
+        self.data = self.data.reindex(full_date_rng)
         return self.data
     
     def stock_chart(self):
@@ -207,9 +210,6 @@ class StockAnalysis:
         return total_gains, total_losses
     
 
-
-
-
 def remove_outliers_IQR(data, column, threshold=1.5):
     data_copy = data.copy()
     Q1 = np.percentile(data_copy[column], 25)
@@ -245,6 +245,12 @@ def test_stationarity(timeseries,name):
     for key,values in adft[4].items():
         output['critical value (%s)'%key] =  values
     print(output)
+    
+def acf_pacf_plot(data,name = None):
+    plt.figure(figsize = (15, 5))
+    plot_acf(data,title=f'Autocorrelation: {name}')
+    plt.figure(figsize = (15, 5))
+    plot_pacf(data,title=f'Partial Autocorrelation: {name}')
     
 # import pandas as pd
 # from scipy import stats
