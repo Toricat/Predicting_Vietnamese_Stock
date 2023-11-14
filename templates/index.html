@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your ML Web App</title>
+</head>
+<body>
+    <h1>Your ML Web App</h1>
+    <form method="post" action="/predict">
+        <label for="user_input">Enter your input:</label>
+        <input type="text" id="user_input" name="user_input" required>
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if user_input %}
+        <h2>Input:</h2>
+        <p>{{ user_input }}</p>
+
+       
+    {% endif %}
+</body>
+</html>
