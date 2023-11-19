@@ -59,15 +59,17 @@ html {
   scroll-behavior: smooth;
   $sans-serif: 'Inter', sans-serif;
   background-color: $off-white;
-  
+  h1{margin: 20px auto}
   body {
     background-color: $off-white;
     color: $black;
     font-family: $sans-serif;
     min-height: 100vh;
     width: 100%;
-    padding: 2.5vh 10vw;
-    
+    padding: 2.5vh 5vw;
+    @media (min-width: 768px) {
+        padding: 2.5vh 10vw;
+      }
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -94,17 +96,16 @@ html {
    
     .container {
       width: 100%;
-    //   max-width: 768px;
       box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       gap: 30px;
-      padding: 2rem 2rem 1.5rem;
+      padding: 2rem 2rem 2rem;
       background-color: $code;
       flex-wrap: wrap;
-      margin-bottom: 60px;
+      margin-bottom: 70px;
       border-radius: 10px;
       overflow: hidden;
       @media (min-width: 768px) {
@@ -122,7 +123,6 @@ html {
           margin-right: 2rem;
           text-align: left;
         }
-        
         h2 {
         font-size: 1.5rem;
         width: 100%;
@@ -143,6 +143,7 @@ html {
           max-width: 24ch;
         }
       }
+
       .dataframe {
         width: 100%;
         max-width: 750px;
@@ -152,11 +153,23 @@ html {
             font-size: 1.3rem;
         }
       }
+      .flexbox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+      }
       .chart {
         width: 100%;
         // @media (min-width: 768px) {
         //   width: 50%;
         // }
+      }
+      .chart2 {
+        width: 100%;
+        @media (min-width: 768px) {
+          width: 49%;
+        }
       }
 
     }
@@ -173,7 +186,18 @@ html {
   .form {
       align-self: center;
     }
-   
+    
+    button {
+        width: clamp(120px, 50vw, 420px);
+        height: 2.5rem;
+        border-radius: 2px;
+        border: 1px solid $black;
+        transition: all 250ms;
+        &:focus, &:hover {
+            outline: none;
+            border: 1px solid $grey;
+          }
+    }
     // I would use the BEM method here for declaring styles,
     // but for the sake of clarity, I decided not to.*
   

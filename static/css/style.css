@@ -20,17 +20,25 @@ html {
   /* #################### All form-related CSS below. #################### */
   /* #################### ########################### #################### */
 }
+html h1 {
+  margin: 20px auto;
+}
 html body {
   background-color: #EDEEE9;
   color: #303030;
   font-family: "Inter", sans-serif;
   min-height: 100vh;
   width: 100%;
-  padding: 2.5vh 10vw;
+  padding: 2.5vh 5vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+}
+@media (min-width: 768px) {
+  html body {
+    padding: 2.5vh 10vw;
+  }
 }
 html body a {
   text-decoration: underline;
@@ -54,10 +62,10 @@ html body .container {
   justify-content: center;
   align-items: center;
   gap: 30px;
-  padding: 2rem 2rem 1.5rem;
+  padding: 2rem 2rem 2rem;
   background-color: #D8DBCE;
   flex-wrap: wrap;
-  margin-bottom: 60px;
+  margin-bottom: 70px;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -108,11 +116,36 @@ html body .container .dataframe {
     font-size: 1.3rem;
   }
 }
+html body .container .flexbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
 html body .container .chart {
   width: 100%;
 }
+html body .container .chart2 {
+  width: 100%;
+}
+@media (min-width: 768px) {
+  html body .container .chart2 {
+    width: 49%;
+  }
+}
 html .form {
   align-self: center;
+}
+html button {
+  width: clamp(120px, 50vw, 420px);
+  height: 2.5rem;
+  border-radius: 2px;
+  border: 1px solid #303030;
+  transition: all 250ms;
+}
+html button:focus, html button:hover {
+  outline: none;
+  border: 1px solid #909090;
 }
 html .form__input {
   width: clamp(120px, 50vw, 420px);

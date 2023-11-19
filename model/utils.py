@@ -66,7 +66,7 @@ class stockchart:
         ax.set_ylabel('Value')
         ax.set_title(f'Plot for {stock_name}({column.capitalize()})', fontsize=20)
         plt.legend()
-
+        return fig
     @staticmethod
     def plot_prices(column, stocks):
         fig, ax = plt.subplots(figsize=(15, 10))
@@ -102,6 +102,7 @@ class stockchart:
         ax.set_title(f'Histplot for {stock_name}({column.capitalize()})')
         ax.set_xlabel('Distribution return')
         ax.set_ylabel('frequency')
+        plt.close()
         plt.show()
         return fig
     @staticmethod
@@ -121,6 +122,7 @@ class stockchart:
         ax_scatter.set_title(f'Scatter Plot for {stock_name}({column.capitalize()})')
         ax_scatter.set_xlabel('value(t-1)')
         ax_scatter.set_ylabel('value(t)')
+        plt.close()
         plt.show()
         return fig_scatter
 
@@ -145,6 +147,7 @@ class stockchart:
             ax_all.set_ylabel('frequency')
             ax_all.legend()
         plt.show()
+        
 
         
 class StockAnalysis:
@@ -225,7 +228,7 @@ def remove_outliers_IQR(data, column, threshold=1.5):
 
     data_cleaned.loc[outliers, column] = np.nan  # Gán giá trị ngoại lai bằng NaN
     print(f"Đã loại bỏ {outliers.sum()} phần tử")
-    return data_cleaned
+    return data_cleaned,outliers.sum()
 
 
 def test_stationarity(timeseries,name):
@@ -233,12 +236,13 @@ def test_stationarity(timeseries,name):
     rolmean = timeseries.rolling(12).mean()
     rolstd = timeseries.rolling(12).std()
 
-    plt.figure(figsize=(15, 10))
+    fig = plt.figure(figsize=(15, 10))
     plt.plot(timeseries, color='blue',label='Original')
     plt.plot(rolmean, color='red', label='Rolling Mean')
     plt.plot(rolstd, color='black', label = 'Rolling Std')
     plt.legend(loc='best')
     plt.title(f'Rolling Mean and Standard Deviation Of {name}')
+    plt.close()
     plt.show(block=False)
     
     print(f"Results of Argument dickey fuller test {name}:")
@@ -247,6 +251,7 @@ def test_stationarity(timeseries,name):
     for key,values in adft[4].items():
         output['critical value (%s)'%key] =  values
     print(output)
+    return output,fig
     
 def acf_pacf_plot(data,name = None):
     plt.figure(figsize = (15, 5))

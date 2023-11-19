@@ -4,7 +4,11 @@ from flask import Flask, render_template, request
 import numpy as np
 import pandas as pd
 
-from model.utils import SelectedStock, stockchart,StockAnalysis
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+from model.utils import SelectedStock, stockchart,StockAnalysis,remove_outliers_IQR,test_stationarity
 
 
 app = Flask(__name__)
@@ -12,6 +16,7 @@ app = Flask(__name__)
 def fig_to_base64(fig):
     buffer = BytesIO()
     fig.savefig(buffer, format='png')
+    plt.close(fig) 
     buffer.seek(0)
     return base64.b64encode(buffer.read()).decode('utf-8')
 
@@ -79,26 +84,46 @@ def index():
         #-------------------------------------------------------------------------------------------#
          
         #-------------------------------------------------------------------------------------------#
-        stock_scatter = stockchart.plot_scatter('Daily_Returns',stock_calculate.data,"VCB")
-        # stock_cleaned = remove_outliers_IQR(stock_calculate.data,"Daily_Returns",4)
+        stock_scatter = stockchart.plot_scatter('Daily_Returns',stock_calculate.data,"Original data")
+        stock_scatter = process_chart(stock_scatter)
+        
+        stock_cleaned,outliers = remove_outliers_IQR(stock_calculate.data,"Daily_Returns",4)
 
-        # has_nan = stock_cleaned["Daily_Returns"].isna()
-        # stock_cleaned = stock_cleaned[~has_nan]
+        has_nan = stock_cleaned["Daily_Returns"].isna()
+        stock_cleaned = stock_cleaned[~has_nan]
 
-        # stock_scatter_clear = stockchart.plot_scatter('Daily_Returns',stock_cleaned,"Stock")
+        stock_scatter_clear = stockchart.plot_scatter('Daily_Returns',stock_cleaned,"Cleaned data")
+        stock_scatter_clear = process_chart(stock_scatter_clear)
         #-------------------------------------------------------------------------------------------#
-
+        
+        #-------------------------------------------------------------------------------------------#
+        stock_histplot_clear = stockchart.plot_histplot('Daily_Returns',stock_cleaned,user_input)
+        stock_histplot_clear = process_chart(stock_histplot_clear)
+        stock_plot_clear = stockchart.plot('Daily_Returns',stock_cleaned,user_input)
+        stock_plot_clear = process_chart(stock_plot_clear)
+        #-------------------------------------------------------------------------------------------#
+        
+        #-------------------------------------------------------------------------------------------#
+        stationarity_result,stationarity_plot = test_stationarity(stock_cleaned['Daily_Returns'],user_input)
+        stationarity_result = stationarity_result.to_frame().to_html(classes='table table-striped')
+        stationarity_plot = process_chart(stationarity_plot)
+        #-------------------------------------------------------------------------------------------#
+        plt.close('all')
         return render_template('index.html', user_input=user_input, start_date=start_date, end_date=end_date,
                                
                                table_html=table_html,fig_open=fig_open,fig_close=fig_close,fig_volume=fig_volume,
                                
                                stock_calculate_data=stock_calculate_data,stock_sharpe_ratio=stock_sharpe_ratio,stock_gains=stock_gains,stock_losses=stock_losses,
                                
-                               new_table_html=new_table_html,new_fig_open=new_fig_open,new_fig_close=new_fig_close,new_fig_volume=new_fig_volume,stock_calculate_describe=stock_calculate_describe
+                               new_table_html=new_table_html,new_fig_open=new_fig_open,new_fig_close=new_fig_close,new_fig_volume=new_fig_volume,stock_calculate_describe=stock_calculate_describe,
                                
-                               ,stock_scatter=stock_scatter,stock_scatter_clear=stock_scatter_clear
+                               stock_scatter=stock_scatter,stock_scatter_clear=stock_scatter_clear,outliers=outliers,
+                               
+                               stock_histplot_clear =stock_histplot_clear ,stock_plot_clear=stock_plot_clear,
+                               
+                               stationarity_result=stationarity_result,stationarity_plot=stationarity_plot
                                )
     
     return render_template('index.html', user_input=None, start_date=None, end_date=None)
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True, use_reloader=True)

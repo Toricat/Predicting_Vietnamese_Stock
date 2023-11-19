@@ -11,8 +11,8 @@
 
 <body>
 
-    <h1 style="margin: 0 auto">Predict Vietnam Stock Price</h1>
-    <div class="container" style="max-width: 808px;margin: 20px auto 60px;padding: 100px 0">
+    <h1>Predict Vietnam Stock Price</h1>
+    <div class="container" style="max-width: 808px;margin: 0 auto 50px;padding: 100px 0">
         <div class="cta-form">
             <h2>Fill out the form!</h2>
             <p>Welcome to Vietnam Stock Price Prediction!</p>
@@ -34,19 +34,9 @@
 
         </form>
     </div>
-    <!-- <form method="post">
-            <label for="user_input">Enter stock symbol:</label>
-            <input type="text" id="user_input" name="user_input" required>
-            <br>
-            <label for="start_date">Enter start date (YYYY-MM-DD):</label>
-            <input type="text" id="start_date" name="start_date" required>
-            <br>
-            <label for="end_date">Enter end date (YYYY-MM-DD):</label>
-            <input type="text" id="end_date" name="end_date" required>
-            <br>
-            <button type="submit">Submit</button>
-        </form> -->
+
     {% if user_input %}
+    <h1>RAW STOCK DATA</h1>
     <div class="container">
         <div class="">
             <p>You entered stock symbol: {{ user_input }}</p>
@@ -68,10 +58,8 @@
 
     </div>
 
+    <h1>NAN DATA REMOVE</h1>
     <div class="container">
-        <div class="">
-            <p>FILL NAN</p>
-        </div>
         <div class="dataframe">
             <pre>{{ new_table_html | safe }}</pre>
         </div>
@@ -87,6 +75,7 @@
 
     </div>
 
+    <h1>STOCK CALCULATE</h1>
     <div class="container">
         <div class="dataframe">
             <pre>{{ stock_calculate_data | safe }}</pre>
@@ -100,15 +89,47 @@
 
     </div>
 
+    <h1>STOCK OULIERS REMOVAL</h1>
     <div class="container">
-        <div class="chart">
+        <div class="flexbox">
+        <div class="chart2">
             <img src="data:image/png;base64,{{ stock_scatter }}" alt="Stock Chart">
         </div>
-        <div class="chart">
+        <div class="chart2">
             <img src="data:image/png;base64,{{ stock_scatter_clear }}" alt="Stock Chart">
         </div>
-
+        </div>
+        <p> Already remove outliers: {{ outliers }}</p>
     </div>
+
+    <h1>ALL CHART</h1>
+    <div class="container">
+        <div class="flexbox">
+        <div class="chart2">
+            <img src="data:image/png;base64,{{ stock_scatter_clear }}" alt="Stock Chart">
+        </div>
+        <div class="chart2">
+            <img src="data:image/png;base64,{{ stock_histplot_clear }}" alt="Stock Chart">
+        </div>
+        </div>
+        <div class="chart1">
+            <img src="data:image/png;base64,{{ stock_plot_clear }}" alt="Stock Chart">
+        </div>
+    </div>
+    
+    <h1>TEST STATIONARITY </h1>
+    <div class="container">
+       
+        <div class="chart">
+            <img src="data:image/png;base64,{{ stationarity_plot }}" alt="Stock Chart">
+        </div>
+        <div class="dataframe">
+            <pre>{{ stationarity_result | safe }}</pre>
+        </div>
+        
+    </div>
+
+
     {% endif %}
 </body>
 
