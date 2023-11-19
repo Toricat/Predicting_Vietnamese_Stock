@@ -43,6 +43,7 @@ class SelectedStock:
         is_ohlc = utils._isOHLC(self.data)
         is_ohlcv = utils._isOHLCV(self.data)
         print(f"stock {self.stock} is OHLC: '{is_ohlc}' and OHLCV: '{is_ohlcv}'")
+        return self.data.head(row)
         
 
 class stockchart:
@@ -63,7 +64,7 @@ class stockchart:
         
         ax.set_xlabel('Date')
         ax.set_ylabel('Value')
-        ax.set_title(f'Plot for {stock_name}({column.capitalize()})')
+        ax.set_title(f'Plot for {stock_name}({column.capitalize()})', fontsize=20)
         plt.legend()
 
     @staticmethod
@@ -74,14 +75,14 @@ class stockchart:
             try:
                 ax.plot(stock.data[column], label=stock_name)
             except AttributeError:
-                ax.plot(stock[column], label=stock)
+                ax.plot(stock[column], label=stock_name)
             except Exception as e:
                 print(f"Lỗi không xác định: {e}")
-        ax.set_xlabel('Date')
-        ax.set_ylabel('Price')
-        ax.set_title(f'Plot for Stock {column} Price')
+        ax.set_xlabel('Date', fontsize=20)
+        ax.set_ylabel('Price', fontsize=20)
+        ax.set_title(f'Plot for Stock {column} Price', fontsize=20)
         plt.legend()
-
+        return fig
     @staticmethod
     def plot_histplot(column, stock_data,stock_name):
         fig, ax = plt.subplots(figsize=(8, 6))
@@ -102,7 +103,7 @@ class stockchart:
         ax.set_xlabel('Distribution return')
         ax.set_ylabel('frequency')
         plt.show()
-
+        return fig
     @staticmethod
     def plot_scatter(column, stock_data,stock_name):
         fig_scatter, ax_scatter = plt.subplots(figsize=(8, 6))
@@ -121,6 +122,7 @@ class stockchart:
         ax_scatter.set_xlabel('value(t-1)')
         ax_scatter.set_ylabel('value(t)')
         plt.show()
+        return fig_scatter
 
 
     @staticmethod
@@ -251,7 +253,8 @@ def acf_pacf_plot(data,name = None):
     plot_acf(data,title=f'Autocorrelation: {name}')
     plt.figure(figsize = (15, 5))
     plot_pacf(data,title=f'Partial Autocorrelation: {name}')
-    
+ 
+   
 # import pandas as pd
 # from scipy import stats
 # z_scores = stats.zscore(r_t)

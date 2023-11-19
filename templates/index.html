@@ -1,23 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your ML Web App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Vietnam Stock Price Prediction</title>
 </head>
+
 <body>
-    <h1>Your ML Web App</h1>
-    <form method="post" action="/predict">
-        <label for="user_input">Enter your input:</label>
-        <input type="text" id="user_input" name="user_input" required>
-        <button type="submit">Predict</button>
-    </form>
 
+    <h1 style="margin: 0 auto">Predict Vietnam Stock Price</h1>
+    <div class="container" style="max-width: 808px;margin: 20px auto 60px;padding: 100px 0">
+        <div class="cta-form">
+            <h2>Fill out the form!</h2>
+            <p>Welcome to Vietnam Stock Price Prediction!</p>
+        </div>
+        <form action="" class="form" method="post">
+
+            <input type="text" placeholder="user_input" class="form__input" id="user_input" name="user_input"
+                required />
+            <label for="user_input" class="form__label">Enter stock symbol</label>
+
+            <input type="text" placeholder="start_date" class="form__input" id="start_date" name="start_date"
+                required />
+            <label for="start_date" class="form__label">Start date</label>
+
+            <input type="text" placeholder="end_date" class="form__input" id="end_date" name="end_date" required />
+            <label for="end_date" class="form__label">End date</label>
+
+            <button type="submit">Submit</button>
+
+        </form>
+    </div>
+    <!-- <form method="post">
+            <label for="user_input">Enter stock symbol:</label>
+            <input type="text" id="user_input" name="user_input" required>
+            <br>
+            <label for="start_date">Enter start date (YYYY-MM-DD):</label>
+            <input type="text" id="start_date" name="start_date" required>
+            <br>
+            <label for="end_date">Enter end date (YYYY-MM-DD):</label>
+            <input type="text" id="end_date" name="end_date" required>
+            <br>
+            <button type="submit">Submit</button>
+        </form> -->
     {% if user_input %}
-        <h2>Input:</h2>
-        <p>{{ user_input }}</p>
+    <div class="container">
+        <div class="">
+            <p>You entered stock symbol: {{ user_input }}</p>
+            <p>Start date: {{ start_date }}</p>
+            <p>End date: {{ end_date }}</p>
+        </div>
+        <div class="dataframe">
+            <pre>{{ table_html | safe }}</pre>
+        </div>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ fig_open }}" alt="Stock Chart">
+        </div>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ fig_close }}" alt="Stock Chart">
+        </div>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ fig_volume }}" alt="Stock Chart">
+        </div>
 
-       
+    </div>
+
+    <div class="container">
+        <div class="">
+            <p>FILL NAN</p>
+        </div>
+        <div class="dataframe">
+            <pre>{{ new_table_html | safe }}</pre>
+        </div>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ new_fig_open }}" alt="Stock Chart">
+        </div>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ new_fig_close }}" alt="Stock Chart">
+        </div>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ new_fig_volume }}" alt="Stock Chart">
+        </div>
+
+    </div>
+
+    <div class="container">
+        <div class="dataframe">
+            <pre>{{ stock_calculate_data | safe }}</pre>
+        </div>
+        <div class="dataframe">
+            <pre>{{ stock_calculate_describe | safe }}</pre>
+        </div>
+        <p>stock_sharpe_ratio: {{ stock_sharpe_ratio }}</p>
+        <p>stock_gains: {{ stock_gains }}</p>
+        <p>stock_losses: {{ stock_losses }}</p>
+
+    </div>
+
+    <div class="container">
+        <div class="chart">
+            <img src="data:image/png;base64,{{ stock_scatter }}" alt="Stock Chart">
+        </div>
+        <div class="chart">
+            <img src="data:image/png;base64,{{ stock_scatter_clear }}" alt="Stock Chart">
+        </div>
+
+    </div>
     {% endif %}
 </body>
+
 </html>
