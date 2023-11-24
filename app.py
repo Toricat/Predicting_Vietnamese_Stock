@@ -8,8 +8,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from model.utils import SelectedStock, stockchart,StockAnalysis,remove_outliers_IQR,test_stationarity
-
+from arima.utils import SelectedStock, stockchart,StockAnalysis,acf_pacf_plot,visualization_result,remove_outliers_IQR,test_stationarity,evaluate_model
+from arima.model import train_test_split,arima_model
 
 app = Flask(__name__)
 
@@ -108,6 +108,42 @@ def index():
         stationarity_result = stationarity_result.to_frame().to_html(classes='table table-striped')
         stationarity_plot = process_chart(stationarity_plot)
         #-------------------------------------------------------------------------------------------#
+        
+        #-------------------------------------------------------------------------------------------#
+        acf_plot ,pacf_plot = acf_pacf_plot(stock_cleaned['Daily_Returns'],user_input)
+        acf_plot  = process_chart(acf_plot )
+        pacf_plot  = process_chart(pacf_plot)
+        #-------------------------------------------------------------------------------------------#
+        
+        #-------------------------------------------------------------------------------------------#
+        train_data, test_data =  train_test_split(stock_cleaned)
+        train_arima = train_data['Daily_Returns']
+        test_arima = test_data['Daily_Returns']
+        #-------------------------------------------------------------------------------------------#
+        
+        #-------------------------------------------------------------------------------------------#
+        history = [x for x in train_arima]
+        y = test_arima
+        predictions,report_summary = arima_model(history,y, order=(1,1,0))   
+
+        #-------------------------------------------------------------------------------------------#
+        
+        #-------------------------------------------------------------------------------------------#
+        predictions_returns = visualization_result(test_data['Daily_Returns'],predictions,stock_cleaned['Daily_Returns'],title ="Returns",save="./static/img/arima_model_returns.pdf")
+        predictions_returns  = process_chart( predictions_returns )
+        result_returns_df = evaluate_model(test_data['Daily_Returns'], predictions)
+        result_returns_df = result_returns_df.to_html(classes='table table-striped')
+        #-------------------------------------------------------------------------------------------#
+        
+        #-------------------------------------------------------------------------------------------#
+        date_minus_one_day = train_arima.index[-1]
+        predictions_close = stock_cleaned["close"].loc[date_minus_one_day]*np.exp(np.cumsum(predictions))
+        predictions_close_plot = visualization_result(test_data['close'],predictions_close,stock_cleaned['close'],title ="Close",save="./static/img/arima_model_close.pdf")
+        predictions_close_plot  = process_chart( predictions_close_plot )
+        result_close_df = evaluate_model(test_data['close'], predictions_close)
+        result_close_df  = result_close_df.to_html(classes='table table-striped')
+        #-------------------------------------------------------------------------------------------#
+        
         plt.close('all')
         return render_template('index.html', user_input=user_input, start_date=start_date, end_date=end_date,
                                
@@ -121,7 +157,16 @@ def index():
                                
                                stock_histplot_clear =stock_histplot_clear ,stock_plot_clear=stock_plot_clear,
                                
-                               stationarity_result=stationarity_result,stationarity_plot=stationarity_plot
+                               stationarity_result=stationarity_result,stationarity_plot=stationarity_plot,
+                               
+                               acf_plot = acf_plot ,pacf_plot = pacf_plot,
+                               
+                               report_summary=report_summary,
+                               
+                               predictions_returns= predictions_returns ,result_returns_df = result_returns_df,
+                               
+                               predictions_close_plot  = predictions_close_plot ,result_close_df = result_close_df
+                               
                                )
     
     return render_template('index.html', user_input=None, start_date=None, end_date=None)
