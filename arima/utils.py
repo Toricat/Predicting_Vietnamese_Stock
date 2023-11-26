@@ -277,7 +277,17 @@ def visualization_result(test_data,predictions,stock,title="Price",save="arima_m
     plt.savefig(save)
     plt.show() 
     return fig
-    
+def visualization_future_result(real_data,forecast_value,forecast_ci,title="Predict Future Close Price",save="arima_model_future.pdf"):
+    fig = plt.figure(figsize=(16, 8))
+    plt.plot(real_data.index[-500:],real_data[-500:], label='Actual Price', color='green')
+    plt.plot(forecast_value.index,forecast_value, label='Forecast', color='red')
+    plt.fill_between(forecast_value.index, forecast_ci.iloc[:, 0], forecast_ci.iloc[:, 1], color='r', alpha=0.1)
+    plt.legend()
+    plt.grid(True)
+    plt.title(title)
+    plt.savefig(save)
+    plt.show()
+    return fig
 def evaluate_model(test_data, predictions):
     mse = mean_squared_error(test_data, predictions)
     mae = mean_absolute_error(test_data, predictions)

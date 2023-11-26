@@ -129,7 +129,7 @@ def index():
         #-------------------------------------------------------------------------------------------#
         
         #-------------------------------------------------------------------------------------------#
-        predictions_returns = visualization_result(test_data['Daily_Returns'],predictions,stock_cleaned['Daily_Returns'],title ="Returns",save="./static/img/arima_model_returns.pdf")
+        predictions_returns = visualization_result(test_data['Daily_Returns'],predictions,stock_cleaned['Daily_Returns'],title ="Returns",save="./static/img/arima_model_returns.png")
         predictions_returns  = process_chart( predictions_returns )
         result_returns_df = evaluate_model(test_data['Daily_Returns'], predictions)
         result_returns_df = result_returns_df.to_html(classes='table table-striped')
@@ -138,7 +138,7 @@ def index():
         #-------------------------------------------------------------------------------------------#
         date_minus_one_day = train_arima.index[-1]
         predictions_close = stock_cleaned["close"].loc[date_minus_one_day]*np.exp(np.cumsum(predictions))
-        predictions_close_plot = visualization_result(test_data['close'],predictions_close,stock_cleaned['close'],title ="Close",save="./static/img/arima_model_close.pdf")
+        predictions_close_plot = visualization_result(test_data['close'],predictions_close,stock_cleaned['close'],title ="Close",save="./static/img/arima_model_close.png")
         predictions_close_plot  = process_chart( predictions_close_plot )
         result_close_df = evaluate_model(test_data['close'], predictions_close)
         result_close_df  = result_close_df.to_html(classes='table table-striped')
