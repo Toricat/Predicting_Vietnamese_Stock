@@ -5,12 +5,14 @@ Study Project by HaMinhQuan
 
 # RESULT
 
-Training and testing
 - Predict in daily returns of Stock
+  
 ![Handlebars templates](static/img/arima_model_returns.png)
 
-- From daily return of Stock to close price
+- From daily return of Stock to close price in data
+  
 ![Handlebars templates](static/img/arima_model_close.png)
 
 - Predict the future closing price of a stock
+
 ![Handlebars templates](static/img/arima_model_future.png)
