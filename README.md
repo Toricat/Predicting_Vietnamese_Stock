@@ -5,4 +5,4 @@ Study Project by HaMinhQuan
 
 # RESULT
 
-![Handlebars templates](static/img/arima_model_returns)
+![Handlebars templates](static/img/arima_model_returns.png)
