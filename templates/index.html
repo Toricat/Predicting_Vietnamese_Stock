@@ -11,8 +11,8 @@
 
 <body>
 
-    <h1>Predict Vietnam Stock Price</h1>
-    <div class="container" style="max-width: 808px;margin: 0 auto 50px;padding: 100px 0">
+    <h1 style="margin:0 auto ;">Predict Vietnam Stock Price</h1>
+    <div class="container" style="max-width: 808px;margin: 0 auto 50px">
         <div class="cta-form">
             <h2>Fill out the form!</h2>
             <p>Welcome to Vietnam Stock Price Prediction!</p>
@@ -30,157 +30,174 @@
             <input type="text" placeholder="end_date" class="form__input" id="end_date" name="end_date" required />
             <label for="end_date" class="form__label">End date</label>
 
+            <input type="text" placeholder="day_predict" class="form__input" id="day_predict" name="day_predict" required />
+            <label for="day_predict" class="form__label">Day predict</label>
+
             <button type="submit">Submit</button>
 
         </form>
     </div>
 
     {% if user_input %}
-    <h1>RAW STOCK DATA</h1>
-    <div class="container">
-        <div class="">
-            <p>You entered stock symbol: {{ user_input }}</p>
-            <p>Start date: {{ start_date }}</p>
-            <p>End date: {{ end_date }}</p>
+    <a href="/" class="button_home">
+        <i class="fas fa-home"></i>
+    </a>
+    <div class = 'result'>
+        <h1>Predicted results for {{day_predict}} days</h1>
+        <div class="container">
+        <div class="chart">
+            <img src="data:image/png;base64,{{ future_plot  }}" alt="Stock Chart">
         </div>
         <div class="dataframe">
-            <pre>{{ table_html | safe }}</pre>
+            <pre>{{ report_future  | safe }}</pre>
         </div>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ fig_open }}" alt="Stock Chart">
         </div>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ fig_close }}" alt="Stock Chart">
-        </div>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ fig_volume }}" alt="Stock Chart">
-        </div>
-
     </div>
-
-    <h1>NAN DATA REMOVE</h1>
-    <div class="container">
-        <div class="dataframe">
-            <pre>{{ new_table_html | safe }}</pre>
-        </div>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ new_fig_open }}" alt="Stock Chart">
-        </div>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ new_fig_close }}" alt="Stock Chart">
-        </div>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ new_fig_volume }}" alt="Stock Chart">
-        </div>
-
-    </div>
-
-    <h1>STOCK CALCULATE</h1>
-    <div class="container">
-        <div class="dataframe">
-            <pre>{{ stock_calculate_data | safe }}</pre>
-        </div>
-        <div class="dataframe">
-            <pre>{{ stock_calculate_describe | safe }}</pre>
-        </div>
-        <p>stock_sharpe_ratio: {{ stock_sharpe_ratio }}</p>
-        <p>stock_gains: {{ stock_gains }}</p>
-        <p>stock_losses: {{ stock_losses }}</p>
-
-    </div>
-
-    <h1>STOCK OULIERS REMOVAL</h1>
-    <div class="container">
-        <div class="flexbox">
-            <div class="chart2">
-                <img src="data:image/png;base64,{{ stock_scatter }}" alt="Stock Chart">
+    <div class = 'processing'>
+        <h1>RAW STOCK DATA</h1>
+        <div class="container">
+            <div class="">
+                <p>You entered stock symbol: {{ user_input }}</p>
+                <p>Start date: {{ start_date }}</p>
+                <p>End date: {{ end_date }}</p>
             </div>
-            <div class="chart2">
-                <img src="data:image/png;base64,{{ stock_scatter_clear }}" alt="Stock Chart">
-            </div>
-        </div>
-        <p> Already remove outliers: {{ outliers }}</p>
-    </div>
-
-    <h1>ALL CHART</h1>
-    <div class="container">
-        <div class="flexbox">
-            <div class="chart2">
-                <img src="data:image/png;base64,{{ stock_scatter_clear }}" alt="Stock Chart">
-            </div>
-            <div class="chart2">
-                <img src="data:image/png;base64,{{ stock_histplot_clear }}" alt="Stock Chart">
-            </div>
-        </div>
-        <div class="chart1">
-            <img src="data:image/png;base64,{{ stock_plot_clear }}" alt="Stock Chart">
-        </div>
-    </div>
-
-    <h1>TEST STATIONARITY </h1>
-    <div class="container">
-
-        <div class="chart">
-            <img src="data:image/png;base64,{{ stationarity_plot }}" alt="Stock Chart">
-        </div>
-        <div class="dataframe">
-            <pre>{{ stationarity_result | safe }}</pre>
-        </div>
-
-    </div>
-
-    <h1>ACF & PACF</h1>
-    <div class="container">
-        <div class="flexbox">
-            <div class="chart">
-                <img src="data:image/png;base64,{{ acf_plot  }}" alt="Stock Chart">
+            <div class="dataframe">
+                <pre>{{ table_html | safe }}</pre>
             </div>
             <div class="chart">
-                <img src="data:image/png;base64,{{ pacf_plot  }}" alt="Stock Chart">
+                <img src="data:image/png;base64,{{ fig_open }}" alt="Stock Chart">
+            </div>
+            <div class="chart">
+                <img src="data:image/png;base64,{{ fig_close }}" alt="Stock Chart">
+            </div>
+            <div class="chart">
+                <img src="data:image/png;base64,{{ fig_volume }}" alt="Stock Chart">
+            </div>
+
+        </div>
+
+        <h1>NAN DATA REMOVE</h1>
+        <div class="container">
+            <div class="dataframe">
+                <pre>{{ new_table_html | safe }}</pre>
+            </div>
+            <div class="chart">
+                <img src="data:image/png;base64,{{ new_fig_open }}" alt="Stock Chart">
+            </div>
+            <div class="chart">
+                <img src="data:image/png;base64,{{ new_fig_close }}" alt="Stock Chart">
+            </div>
+            <div class="chart">
+                <img src="data:image/png;base64,{{ new_fig_volume }}" alt="Stock Chart">
+            </div>
+
+        </div>
+
+        <h1>STOCK CALCULATE</h1>
+        <div class="container">
+            <div class="dataframe">
+                <pre>{{ stock_calculate_data | safe }}</pre>
+            </div>
+            <div class="dataframe">
+                <pre>{{ stock_calculate_describe | safe }}</pre>
+            </div>
+            <p>stock_sharpe_ratio: {{ stock_sharpe_ratio }}</p>
+            <p>stock_gains: {{ stock_gains }}</p>
+            <p>stock_losses: {{ stock_losses }}</p>
+
+        </div>
+
+        <h1>STOCK OULIERS REMOVAL</h1>
+        <div class="container">
+            <div class="flexbox">
+                <div class="chart2">
+                    <img src="data:image/png;base64,{{ stock_scatter }}" alt="Stock Chart">
+                </div>
+                <div class="chart2">
+                    <img src="data:image/png;base64,{{ stock_scatter_clear }}" alt="Stock Chart">
+                </div>
+            </div>
+            <p> Already remove outliers: {{ outliers }}</p>
+        </div>
+
+        <h1>ALL CHART</h1>
+        <div class="container">
+            <div class="flexbox">
+                <div class="chart2">
+                    <img src="data:image/png;base64,{{ stock_scatter_clear }}" alt="Stock Chart">
+                </div>
+                <div class="chart2">
+                    <img src="data:image/png;base64,{{ stock_histplot_clear }}" alt="Stock Chart">
+                </div>
+            </div>
+            <div class="chart1">
+                <img src="data:image/png;base64,{{ stock_plot_clear }}" alt="Stock Chart">
             </div>
         </div>
-    </div>
 
-    <h1>MODEL ARIMA</h1>
-    <div class="container">
-        <h1>Model Summary</h1>
-        {% for table in report_summary.tables %}
-        <table border="1">
-            <tr>
-                {% for col in table.data[0] %}
-                <th>{{ col }}</th>
+        <h1>TEST STATIONARITY </h1>
+        <div class="container">
+
+            <div class="chart">
+                <img src="data:image/png;base64,{{ stationarity_plot }}" alt="Stock Chart">
+            </div>
+            <div class="dataframe">
+                <pre>{{ stationarity_result | safe }}</pre>
+            </div>
+
+        </div>
+
+        <h1>ACF & PACF</h1>
+        <div class="container">
+            <div class="flexbox">
+                <div class="chart">
+                    <img src="data:image/png;base64,{{ acf_plot  }}" alt="Stock Chart">
+                </div>
+                <div class="chart">
+                    <img src="data:image/png;base64,{{ pacf_plot  }}" alt="Stock Chart">
+                </div>
+            </div>
+        </div>
+
+        <h1>MODEL ARIMA</h1>
+        <div class="container">
+            <h1>Model Summary</h1>
+            {% for table in report_summary.tables %}
+            <table border="1">
+                <tr>
+                    {% for col in table.data[0] %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in table.data[1:] %}
+                <tr>
+                    {% for val in row %}
+                    <td>{{ val }}</td>
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            {% for row in table.data[1:] %}
-            <tr>
-                {% for val in row %}
-                <td>{{ val }}</td>
-                {% endfor %}
-            </tr>
+            </table>
+            <br>
             {% endfor %}
-        </table>
-        <br>
-        {% endfor %}
 
-        <h1>Predictions returns</h1>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ predictions_returns  }}" alt="Stock Chart">
-        </div>
-        <div class="dataframe">
-            <pre>{{ result_returns_df  | safe }}</pre>
-        </div>
-        <h1>Predictions Close Price</h1>
-        <div class="chart">
-            <img src="data:image/png;base64,{{ predictions_close_plot  }}" alt="Stock Chart">
-        </div>
-        <div class="dataframe">
-            <pre>{{ result_close_df  | safe }}</pre>
-        </div>
+            <h1>Predictions returns</h1>
+            <div class="chart">
+                <img src="data:image/png;base64,{{ predictions_returns  }}" alt="Stock Chart">
+            </div>
+            <div class="dataframe">
+                <pre>{{ result_returns_df  | safe }}</pre>
+            </div>
+            <h1>Predictions Close Price</h1>
+            <div class="chart">
+                <img src="data:image/png;base64,{{ predictions_close_plot  }}" alt="Stock Chart">
+            </div>
+            <div class="dataframe">
+                <pre>{{ result_close_df  | safe }}</pre>
+            </div>
 
 
+        </div>
     </div>
-
-
     {% endif %}
 </body>
 

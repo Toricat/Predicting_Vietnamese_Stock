@@ -8,8 +8,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from arima.utils import SelectedStock, stockchart,StockAnalysis,acf_pacf_plot,visualization_result,remove_outliers_IQR,test_stationarity,evaluate_model
-from arima.model import train_test_split,arima_model
+from arima.utils import SelectedStock, stockchart,StockAnalysis,acf_pacf_plot,visualization_result, visualization_future_result,remove_outliers_IQR,test_stationarity,evaluate_model
+from arima.model import train_test_split,arima_model,arima_model_future
 
 app = Flask(__name__)
 
@@ -31,6 +31,8 @@ def index():
         user_input = request.form['user_input']
         start_date = request.form['start_date']
         end_date = request.form['end_date']
+        day_predict = request.form['day_predict']
+
         
         #-------------------------------------------------------------------------------------------#
         stock = SelectedStock(user_input, start_date, end_date)
@@ -125,7 +127,6 @@ def index():
         history = [x for x in train_arima]
         y = test_arima
         predictions,report_summary = arima_model(history,y, order=(1,1,0))   
-
         #-------------------------------------------------------------------------------------------#
         
         #-------------------------------------------------------------------------------------------#
@@ -144,8 +145,34 @@ def index():
         result_close_df  = result_close_df.to_html(classes='table table-striped')
         #-------------------------------------------------------------------------------------------#
         
+        #-------------------------------------------------------------------------------------------#
+        day_predict = int(day_predict)
+        forecast_values,forecast_ci,report_future = arima_model_future(stock_cleaned['close'] ,forecast_steps= day_predict, order=(1,1,0))
+
+        forecast_index = pd.date_range(start=stock_cleaned.index[-1], periods=day_predict + 1, freq='D')[1:]
+        forecast_df = pd.DataFrame({'Forecast': forecast_values.values}, index=forecast_index)
+
+        future_plot = visualization_future_result(stock_cleaned["close"],forecast_df['Forecast'],forecast_ci,title ="Close Price",save="./static/img/arima_model_future.png")
+        future_plot  = process_chart( future_plot )
+        
+        df = forecast_ci
+        df.set_index(forecast_index, inplace=True)
+
+        prices_index = stock_cleaned["close"].index[-1]
+        prices_index_predict = forecast_index[1]
+        prices = stock_cleaned["close"][-1]
+        prices_predict = forecast_values[0:1].values
+
+        df['predict_value'] = forecast_df['Forecast']
+        df['percent_lower'] = ((df['lower close'] - prices) / prices ) * 100
+        df['percent_upper'] = ((df['upper close']- prices) / prices ) * 100
+
+        df['percent_lower'] = df['percent_lower'].round(2).map('{:.2f}%'.format)
+        df['percent_upper'] = df['percent_upper'].round(2).map('{:.2f}%'.format)
+        df = df.to_html(classes='table table-striped')
+        #-------------------------------------------------------------------------------------------#
         plt.close('all')
-        return render_template('index.html', user_input=user_input, start_date=start_date, end_date=end_date,
+        return render_template('index.html', user_input=user_input, start_date=start_date, end_date=end_date, day_predict=day_predict,
                                
                                table_html=table_html,fig_open=fig_open,fig_close=fig_close,fig_volume=fig_volume,
                                
@@ -165,8 +192,9 @@ def index():
                                
                                predictions_returns= predictions_returns ,result_returns_df = result_returns_df,
                                
-                               predictions_close_plot  = predictions_close_plot ,result_close_df = result_close_df
+                               predictions_close_plot  = predictions_close_plot ,result_close_df = result_close_df,
                                
+                               future_plot=future_plot,report_future=df
                                )
     
     return render_template('index.html', user_input=None, start_date=None, end_date=None)

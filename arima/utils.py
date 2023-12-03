@@ -284,6 +284,8 @@ def visualization_future_result(real_data,forecast_value,forecast_ci,title="Pred
     plt.fill_between(forecast_value.index, forecast_ci.iloc[:, 0], forecast_ci.iloc[:, 1], color='r', alpha=0.1)
     plt.legend()
     plt.grid(True)
+    plt.xlabel('Time')
+    plt.ylabel(f'Stock {title}')
     plt.title(title)
     plt.savefig(save)
     plt.show()
