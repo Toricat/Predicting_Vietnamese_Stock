@@ -1,0 +1,32 @@
+📦Arimax
+ ┣ 📂arima
+ ┃ ┣ 📂__pycache__
+ ┃ ┃ ┣ 📜model.cpython-310.pyc
+ ┃ ┃ ┣ 📜utils.cpython-310.pyc
+ ┃ ┃ ┗ 📜__init__.cpython-310.pyc
+ ┃ ┣ 📜model.ipynb
+ ┃ ┣ 📜model.py
+ ┃ ┣ 📜utils.py
+ ┃ ┗ 📜__init__.py
+ ┣ 📂lstm
+ ┃ ┣ 📜model.ipynb
+ ┃ ┗ 📜__init__.py
+ ┣ 📂static
+ ┃ ┣ 📂css
+ ┃ ┃ ┣ 📜style.css
+ ┃ ┃ ┣ 📜style.css.map
+ ┃ ┃ ┗ 📜style.scss
+ ┃ ┗ 📂img
+ ┃ ┃ ┣ 📜arima_model_close.png
+ ┃ ┃ ┣ 📜arima_model_future.png
+ ┃ ┃ ┗ 📜arima_model_returns.png
+ ┣ 📂templates
+ ┃ ┗ 📜index.html
+ ┣ 📂__pycache__
+ ┃ ┣ 📜tree.cpython-310.pyc
+ ┃ ┗ 📜utils.cpython-310.pyc
+ ┣ 📜app.py
+ ┣ 📜demo.tree
+ ┣ 📜README.md
+ ┣ 📜utils.py
+ ┗ 📜__init__.py

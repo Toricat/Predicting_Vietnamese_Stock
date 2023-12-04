@@ -223,13 +223,12 @@ def remove_outliers_IQR(data, column, threshold=1.5):
     Q1 = np.percentile(data_copy[column], 25)
     Q3 = np.percentile(data_copy[column], 75)
     IQR = Q3 - Q1
-    # Tìm giá trị ngoại lai
     lower_bound = Q1 - threshold * IQR
     upper_bound = Q3 + threshold * IQR
     outliers = (data_copy[column] < lower_bound) | (data_copy[column] > upper_bound)
     data_cleaned = data_copy.copy()
 
-    data_cleaned.loc[outliers, column] = np.nan  # Gán giá trị ngoại lai bằng NaN
+    data_cleaned.loc[outliers, column] = np.nan  
     print(f"Đã loại bỏ {outliers.sum()} phần tử")
     return data_cleaned,outliers.sum()
 
@@ -296,7 +295,6 @@ def evaluate_model(test_data, predictions):
     rmse = math.sqrt(mse)
     r2 = r2_score(test_data, predictions)
 
-    # Tạo DataFrame
     metrics_df = pd.DataFrame({
         'Metric': ['MSE', 'MAE', 'RMSE', 'R-squared'],
         'Value': [mse, mae, rmse, r2]
